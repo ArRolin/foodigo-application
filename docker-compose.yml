@@ -5,10 +5,10 @@ services:
       dockerfile: Dockerfile
     container_name: foodigo
     restart: unless-stopped
-    ports:
-      - "${APP_PORT:-8080}:80"
-      - "${DB_PORT:-3306}:3306"
-      - "${REDIS_PORT:-6379}:6379"
+    expose:
+      - "80"
+      - "3306"
+      - "6379"
     environment:
       - APP_ENV=${APP_ENV:-production}
       - APP_KEY=${APP_KEY}
