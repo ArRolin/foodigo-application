@@ -1,16 +1,17 @@
 FROM php:8.2-fpm
 
-# Avoid interactive prompts
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install system dependencies + MySQL + Redis
+# Install PHP extensions using pre-compiled binaries (much faster than compiling from source)
+COPY --from=mlocati/php-extension-installer:latest /usr/bin/install-php-extensions /usr/local/bin/
+
+RUN install-php-extensions \
+    pdo_mysql mbstring exif pcntl bcmath gd zip intl gmp opcache
+
+# Install system dependencies (MariaDB + Redis + Nginx + Supervisor)
 RUN apt-get update && apt-get install -y \
-    git curl zip unzip libpng-dev libonig-dev libxml2-dev \
-    libzip-dev libicu-dev libfreetype6-dev libjpeg62-turbo-dev \
-    libwebp-dev libgmp-dev nginx supervisor cron \
+    git curl zip unzip nginx supervisor cron \
     mariadb-server redis-server \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
-    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip intl gmp opcache \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install Node.js 20
