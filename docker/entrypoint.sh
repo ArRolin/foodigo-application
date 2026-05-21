@@ -83,15 +83,15 @@ GRANT ALL PRIVILEGES ON \`$DB_NAME\`.* TO '$DB_USER'@'%';
 FLUSH PRIVILEGES;
 EOF
 
-# Stop temporary MariaDB
-mariadb-admin -u root shutdown
-sleep 2
-
-# Run migrations if AUTO_MIGRATE is set
+# Run migrations while MariaDB is still up
 if [ "$AUTO_MIGRATE" = "true" ]; then
     echo "Running migrations..."
     php artisan migrate --force
 fi
+
+# Stop temporary MariaDB (supervisor will restart it)
+mariadb-admin -u root shutdown
+sleep 2
 
 echo "=== Foodigo Ready ==="
 echo "APP_URL: ${APP_URL:-http://localhost}"
