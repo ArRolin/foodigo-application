@@ -25,12 +25,9 @@ return new class extends Migration
             $table->enum('status', ['active', 'inactive', 'ordered'])->default('active');
             $table->timestamps();
 
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
-            $table->foreign('restaurant_id')->references('id')->on('restaurants')->onDelete('cascade');
-            
             $table->index(['user_id', 'status']);
             $table->index(['restaurant_id']);
+            $table->index(['product_id']);
         });
     }
 
