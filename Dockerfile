@@ -2,16 +2,16 @@ FROM php:8.2-fpm
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install PHP extensions using pre-compiled binaries (much faster than compiling from source)
+# Install PHP extensions using pre-compiled binaries
 COPY --from=mlocati/php-extension-installer:latest /usr/bin/install-php-extensions /usr/local/bin/
 
 RUN install-php-extensions \
     pdo_mysql mbstring exif pcntl bcmath gd zip intl gmp opcache
 
-# Install system dependencies (MariaDB + Redis + Nginx + Supervisor)
+# Install system dependencies (Nginx + Supervisor only)
 RUN apt-get update && apt-get install -y \
     git curl zip unzip nginx supervisor cron \
-    mariadb-server redis-server \
+    redis-server \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install Node.js 20
@@ -42,9 +42,7 @@ RUN composer dump-autoload --optimize
 RUN npm run build
 
 # Create required directories
-RUN mkdir -p /run/mysqld /var/log/mysql /var/log/nginx \
-    && chown mysql:mysql /run/mysqld \
-    && chown -R mysql:mysql /var/log/mysql
+RUN mkdir -p /var/log/nginx
 
 # Set Laravel permissions
 RUN chown -R www-data:www-data /var/www/html \
@@ -54,10 +52,9 @@ RUN chown -R www-data:www-data /var/www/html \
 # Copy configs
 COPY docker/nginx.conf /etc/nginx/sites-available/default
 COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-COPY docker/mysql.cnf /etc/mysql/conf.d/custom.cnf
 COPY docker/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-EXPOSE 80 3306 6379
+EXPOSE 80
 
 ENTRYPOINT ["/entrypoint.sh"]
