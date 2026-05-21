@@ -44,26 +44,26 @@ if [ -z "$JWT_SECRET" ]; then
     export JWT_SECRET
 fi
 
-# Initialize MySQL data directory if needed
+# Initialize MariaDB data directory if needed
 if [ ! -d "/var/lib/mysql/mysql" ]; then
-    echo "Initializing MySQL data directory..."
-    mysqld --initialize-insecure --user=mysql
+    echo "Initializing MariaDB data directory..."
+    mariadb-install-db --user=mysql --datadir=/var/lib/mysql
 fi
 
 # Ensure correct permissions
 chown -R mysql:mysql /var/lib/mysql /run/mysqld
 
-# Start MySQL temporarily to create database and user
-echo "Starting MySQL for setup..."
-mysqld --user=mysql &
+# Start MariaDB temporarily to create database and user
+echo "Starting MariaDB for setup..."
+mariadbd --user=mysql &
 sleep 5
 
-# Wait for MySQL to be ready
+# Wait for MariaDB to be ready
 for i in $(seq 1 30); do
-    if mysqladmin ping -h localhost --silent 2>/dev/null; then
+    if mariadb-admin ping -h localhost --silent 2>/dev/null; then
         break
     fi
-    echo "Waiting for MySQL... ($i)"
+    echo "Waiting for MariaDB... ($i)"
     sleep 1
 done
 
@@ -72,7 +72,7 @@ DB_NAME=${DB_DATABASE:-foodigo}
 DB_USER=${DB_USERNAME:-foodigo}
 
 echo "Setting up database: $DB_NAME"
-mysql -u root <<EOF
+mariadb -u root <<EOF
 CREATE DATABASE IF NOT EXISTS \`$DB_NAME\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 CREATE USER IF NOT EXISTS '$DB_USER'@'localhost' IDENTIFIED BY '$DB_PASSWORD';
 CREATE USER IF NOT EXISTS '$DB_USER'@'127.0.0.1' IDENTIFIED BY '$DB_PASSWORD';
@@ -83,8 +83,8 @@ GRANT ALL PRIVILEGES ON \`$DB_NAME\`.* TO '$DB_USER'@'%';
 FLUSH PRIVILEGES;
 EOF
 
-# Stop temporary MySQL
-mysqladmin -u root shutdown
+# Stop temporary MariaDB
+mariadb-admin -u root shutdown
 sleep 2
 
 # Run migrations if AUTO_MIGRATE is set
