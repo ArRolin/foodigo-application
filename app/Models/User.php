@@ -1,0 +1,101 @@
+<?php
+
+namespace App\Models;
+
+// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
+
+class User extends Authenticatable
+{
+    use HasApiTokens, HasFactory, Notifiable;
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+        'phone',
+        'status',
+        'verification_token',
+        'is_banned',
+        'email_verified_at',
+        'username',
+        'provider',
+        'provider_id',
+        'reset_token',
+    ];
+
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+    ];
+
+    public static function boot()
+    {
+        parent::boot();
+
+        self::creating(function ($model) {
+            $model->readable_id = $model->count() + 100000;
+        });
+
+        self::created(function ($model) {
+        });
+
+        self::updating(function ($model) {
+        });
+
+        self::updated(function ($model) {
+        });
+
+
+        self::deleting(function ($model) {
+
+        });
+
+        self::deleted(function ($model) {
+
+        });
+    }
+
+    /**
+     * Get the OTP codes for the user.
+     */
+    public function otps()
+    {
+        return $this->hasMany(UserOtp::class);
+    }
+
+    /**
+     * Get the latest OTP for a specific type.
+     */
+    public function getLatestOtp($type = 'email_verification')
+    {
+        return $this->otps()
+            ->where('type', $type)
+            ->where('used', false)
+            ->where('expires_at', '>', now())
+            ->latest()
+            ->first();
+    }
+}
