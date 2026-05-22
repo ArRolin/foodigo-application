@@ -11,8 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (!Schema::hasTable('reviews')) return;
         Schema::table('reviews', function (Blueprint $table) {
-            $table->unsignedBigInteger('restaurant_id');
+            if (!Schema::hasColumn('reviews', 'restaurant_id')) {
+                $table->unsignedBigInteger('restaurant_id');
+            }
         });
     }
 

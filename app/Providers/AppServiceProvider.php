@@ -66,13 +66,14 @@ class AppServiceProvider extends ServiceProvider
 
                     $wishlist = $wishlistItems->map(function ($item) {
                         $product = Product::find($item->product_id);
+                        if (!$product) return null;
                         return [
                             'wishlist_item' => $item,
                             'product' => $product,
                             'translated_name' => $product->name,
                             'item_id' => $product->id,
                         ];
-                    });
+                    })->filter();
 
                     $view->with('wishlist', $wishlist);
                 } else {
