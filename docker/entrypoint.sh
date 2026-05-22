@@ -39,11 +39,6 @@ if [ "$AUTO_MIGRATE" = "true" ]; then
     php artisan migrate --force || echo "WARNING: Migrations had errors (tables may already exist)"
 fi
 
-# Clear and cache config
-php artisan config:cache || true
-php artisan route:cache || true
-php artisan view:cache || true
-
 echo "=== Foodigo Ready ==="
 echo "APP_URL: ${APP_URL:-http://localhost}"
 echo "DB: ${DB_HOST:-external}:${DB_PORT:-3306}/${DB_DATABASE:-foodigo}"

@@ -97,23 +97,6 @@ class AppServiceProvider extends ServiceProvider
 
 
 
-            // Helper function to get general settings
-            if (!function_exists('getGeneralSetting')) {
-                function getGeneralSetting($key = null) {
-                    static $settings = null;
-
-                    if ($settings === null) {
-                        $settings = \Modules\GlobalSetting\App\Models\GlobalSetting::get()->keyBy('key');
-                    }
-
-                    if ($key === null) {
-                        return $settings;
-                    }
-
-                    return $settings->get($key);
-                }
-            }
-
         }catch(Exception $ex){
             Log::info('AppServiceProvider : '. $ex->getMessage());
 

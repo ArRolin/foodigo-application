@@ -244,6 +244,23 @@ function renderDynamicMenu($location, $options = [])
 }
 
 /**
+ * Get general setting value by key
+ */
+function getGeneralSetting($key = null) {
+    static $settings = null;
+
+    if ($settings === null) {
+        $settings = \Modules\GlobalSetting\App\Models\GlobalSetting::get()->keyBy('key');
+    }
+
+    if ($key === null) {
+        return $settings;
+    }
+
+    return $settings->get($key);
+}
+
+/**
  * Get menu items by location
  */
 function getMenuByLocation($location)
