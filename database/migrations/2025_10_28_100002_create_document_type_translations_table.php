@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('name');
             $table->timestamps();
 
-            $table->foreign('document_type_id')->references('id')->on('document_types')->onDelete('cascade');
+            $table->index(['document_type_id']);
         });
     }
 

@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('name');
             $table->timestamps();
 
-            $table->foreign('vehicle_type_id')->references('id')->on('vehicle_types')->onDelete('cascade');
+            $table->index(['vehicle_type_id']);
         });
     }
 

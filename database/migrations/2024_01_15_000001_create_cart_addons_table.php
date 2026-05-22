@@ -20,10 +20,8 @@ return new class extends Migration
             $table->integer('quantity')->default(1);
             $table->timestamps();
 
-            $table->foreign('cart_id')->references('id')->on('carts')->onDelete('cascade');
-            $table->foreign('addon_id')->references('id')->on('addons')->onDelete('cascade');
-            
             $table->index(['cart_id']);
+            $table->index(['addon_id']);
         });
     }
 
