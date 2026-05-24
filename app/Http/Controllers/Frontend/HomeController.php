@@ -81,7 +81,7 @@ class HomeController extends Controller
     public function view_website()
     {
         $homepage = Homepage::first();
-        $home_translate = HomepageTranslation::where(['homepage_id' => $homepage->id, 'lang_code' => front_lang()])->first();
+        $home_translate = HomepageTranslation::where(['homepage_id' => $homepage?->id, 'lang_code' => front_lang()])->first();
         $categories = Category::where('status', 'enable')->get();
 
         $featured_products = Product::where('status', 'enable')->with('restaurant')->withAvg('reviews', 'rating')->withCount('reviews')->where('is_featured', 'enable')->latest()->take(8)->get();
@@ -120,7 +120,7 @@ class HomeController extends Controller
     public function view_categories(Request $request): Renderable
     {
         $homepage = Homepage::first();
-        $home_translate = HomepageTranslation::where(['homepage_id' => $homepage->id, 'lang_code' => front_lang()])->first();
+        $home_translate = HomepageTranslation::where(['homepage_id' => $homepage?->id, 'lang_code' => front_lang()])->first();
         $categories = Category::where('status', 'enable')->get();
         $foods = Product::where('status', 'enable')
             ->whereHas('offer')
@@ -151,7 +151,7 @@ class HomeController extends Controller
     public function about(): Renderable
     {
         $homepage = Homepage::first();
-        $home_translate = HomepageTranslation::where(['homepage_id' => $homepage->id, 'lang_code' => front_lang()])->first();
+        $home_translate = HomepageTranslation::where(['homepage_id' => $homepage?->id, 'lang_code' => front_lang()])->first();
         $about = AboutUs::first();
         $popular_products = Product::where('status', 'enable')
             ->withCount(['orderItems'])
@@ -209,7 +209,7 @@ class HomeController extends Controller
 
         $homepage = Homepage::first();
 
-        $home_translate = HomepageTranslation::where(['homepage_id' => $homepage->id, 'lang_code' => front_lang()])->first();
+        $home_translate = HomepageTranslation::where(['homepage_id' => $homepage?->id, 'lang_code' => front_lang()])->first();
 
         $banners = Banner::where('status', 1)->get();
 
@@ -237,7 +237,7 @@ class HomeController extends Controller
     {
         $contact_us = ContactUs::first();
         $homepage = Homepage::first();
-        $home_translate = HomepageTranslation::where(['homepage_id' => $homepage->id, 'lang_code' => front_lang()])->first();
+        $home_translate = HomepageTranslation::where(['homepage_id' => $homepage?->id, 'lang_code' => front_lang()])->first();
 
         $seo_setting = SeoSetting::where('id', 4)->first();
 
@@ -271,7 +271,7 @@ class HomeController extends Controller
         $blogs = $blogs->appends($request->all());
 
         $homepage = Homepage::first();
-        $home_translate = HomepageTranslation::where(['homepage_id' => $homepage->id, 'lang_code' => front_lang()])->first();
+        $home_translate = HomepageTranslation::where(['homepage_id' => $homepage?->id, 'lang_code' => front_lang()])->first();
 
         $seo_setting = SeoSetting::where('id', 2)->first();
 
@@ -287,7 +287,7 @@ class HomeController extends Controller
     public function blog_details($slug): Renderable
     {
         $homepage = Homepage::first();
-        $home_translate = HomepageTranslation::where(['homepage_id' => $homepage->id, 'lang_code' => front_lang()])->first();
+        $home_translate = HomepageTranslation::where(['homepage_id' => $homepage?->id, 'lang_code' => front_lang()])->first();
         $blog = Blog::where('slug', $slug)->with('comments')->first();
         $latest_blogs = Blog::where('slug', '!=', $slug)->get();
         $categories = BlogCategory::where('status', 1)->withcount('blogs')->get();
@@ -325,7 +325,7 @@ class HomeController extends Controller
     public function view_all_restaurant(Request $request): Renderable
     {
         $homepage = Homepage::first();
-        $home_translate = HomepageTranslation::where(['homepage_id' => $homepage->id, 'lang_code' => front_lang()])->first();
+        $home_translate = HomepageTranslation::where(['homepage_id' => $homepage?->id, 'lang_code' => front_lang()])->first();
 
         $restaurants = Restaurant::where('is_banned', 'disable')->withAvg('reviews', 'rating')->withCount('reviews')->where('admin_approval', 'enable');
 
@@ -356,7 +356,7 @@ class HomeController extends Controller
     {
         $homepage = Homepage::first();
 
-        $home_translate = HomepageTranslation::where(['homepage_id' => $homepage->id, 'lang_code' => front_lang()])->first();
+        $home_translate = HomepageTranslation::where(['homepage_id' => $homepage?->id, 'lang_code' => front_lang()])->first();
 
         $restaurant = Restaurant::where('slug', $slug)->withAvg('reviews', 'rating')->withCount('reviews')->first();
 
@@ -396,7 +396,7 @@ class HomeController extends Controller
         $cuisines = Cuisine::where('status', 'enable')->get();
         $discount_products = Product::where('status', 'enable')->whereHas('offer')->withAvg('reviews', 'rating')->withCount('reviews')->latest()->get();
         $homepage = Homepage::first();
-        $home_translate = HomepageTranslation::where(['homepage_id' => $homepage->id, 'lang_code' => front_lang()])->first();
+        $home_translate = HomepageTranslation::where(['homepage_id' => $homepage?->id, 'lang_code' => front_lang()])->first();
 
         foreach ($cuisines as $cuisine) {
             $restaurants = Restaurant::where('is_banned', 'disable')->where('admin_approval', 'enable')->whereJsonContains('cuisines', "$cuisine->id")->count();
@@ -427,7 +427,7 @@ class HomeController extends Controller
     public function search(Request $request): Renderable
     {
         $homepage = Homepage::first();
-        $home_translate = HomepageTranslation::where(['homepage_id' => $homepage->id, 'lang_code' => front_lang()])->first();
+        $home_translate = HomepageTranslation::where(['homepage_id' => $homepage?->id, 'lang_code' => front_lang()])->first();
         $cuisines = Cuisine::where('status', 'enable')->get();
         $foods = Product::where('products.status', 'enable')
             ->withAvg('reviews', 'rating')->withCount('reviews')
